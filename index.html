@@ -1,0 +1,1751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>冬の日本 · 东京 / 长野 / 镰仓 10 日｜12.22–12.31</title>
+<meta name="description" content="2026 年 12 月 22–31 日，东京—长野—镰仓 10 日行程：每天一张可展开卡片，含动线示意、景点停留、交通、美食与当日贴士。">
+<meta name="theme-color" content="#eef4fd">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237fb0ff'/%3E%3Cstop offset='1' stop-color='%232f6df6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='16' r='5' fill='%23fff' opacity='.92'/%3E%3C/svg%3E">
+<!--
+  ==========================================================================
+  冬の日本 · 10 日行程 · 液态玻璃版 v2.0（2026-11-19）
+  --------------------------------------------------------------------------
+  【改哪里】
+  1) 配色：只改 :root 里的 CSS 变量（浅色在 :root，深色在 prefers-color-scheme 里）。
+  2) 单日内容：每张 <article class="day"> 是独立模块，按 D1…D10 注释分段，
+     内部固定 5 个 module：动线示意 / 景点与停留 / 交通衔接 / 当日美食 / 当日贴士。
+  3) 动线示意图：纯 SVG，viewBox 固定 0 0 360 150；
+     改点位只动 <circle cx cy> 和对应 <text x y> 的数字（数字要成对改）。
+  4) 加减天数：复制整块 <article class="day">…</article>，把 id、aria-controls、
+     aria-labelledby、data-day 全部改成新编号（如 d11 / d11body / d11btn）。
+  5) 底部勾选进度存在浏览器 localStorage（键名 jp-trip-checks-v1），不联网。
+  6) 全部内联，无外链字体 / 图片 / JS；唯一外链是景点旁的「地图」Google Maps 链接。
+  ==========================================================================
+-->
+<style>
+/* ============================================================
+   0. 设计变量（改配色只动这里）
+   ============================================================ */
+:root{
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+          "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", Arial, sans-serif;
+
+  --ink:   #15181e;
+  --ink-2: rgba(21,24,30,.68);
+  --ink-3: rgba(21,24,30,.44);
+  --accent: #2f6df6;
+  --accent-soft: rgba(47,109,246,.10);
+  --hair:  rgba(22,32,52,.09);
+
+  /* 液态玻璃三件套：填充 / 描边 / 内高光 */
+  --glass:        rgba(255,255,255,.50);
+  --glass-strong: rgba(255,255,255,.66);
+  --glass-2:      rgba(255,255,255,.40);
+  --glass-border: rgba(255,255,255,.62);
+  --glass-inset:  inset 0 1px 0 rgba(255,255,255,.70);
+
+  --shadow-sm: 0 4px 14px rgba(26,40,70,.06);
+  --shadow:    0 12px 30px rgba(26,40,70,.09), 0 2px 6px rgba(26,40,70,.04);
+  --shadow-lg: 0 20px 50px rgba(26,40,70,.14);
+
+  --r-xl: 28px; --r-lg: 22px; --r-md: 16px; --r-sm: 10px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --blur: 18px;
+  --tap: rgba(255,255,255,.22);
+
+  /* 动线示意图配色 */
+  --map-dot: rgba(80,105,150,.17);
+  --map-line: rgba(72,102,160,.42);
+  --map-node-bg: #ffffff;
+  --map-node-line: rgba(66,98,155,.55);
+  --map-num: #2b4468;
+  --map-label: rgba(24,34,54,.72);
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --ink:   #f3f5f9;
+    --ink-2: rgba(243,245,249,.70);
+    --ink-3: rgba(243,245,249,.44);
+    --accent: #7fb0ff;
+    --accent-soft: rgba(127,176,255,.16);
+    --hair:  rgba(255,255,255,.10);
+
+    --glass:        rgba(255,255,255,.07);
+    --glass-strong: rgba(255,255,255,.12);
+    --glass-2:      rgba(255,255,255,.05);
+    --glass-border: rgba(255,255,255,.14);
+    --glass-inset:  inset 0 1px 0 rgba(255,255,255,.12);
+    --tap: rgba(255,255,255,.06);
+
+    --shadow-sm: 0 4px 14px rgba(0,0,0,.30);
+    --shadow:    0 12px 30px rgba(0,0,0,.38), 0 2px 6px rgba(0,0,0,.22);
+    --shadow-lg: 0 20px 50px rgba(0,0,0,.50);
+
+    --map-dot: rgba(160,190,240,.15);
+    --map-line: rgba(150,185,240,.45);
+    --map-node-bg: rgba(28,34,46,.92);
+    --map-node-line: rgba(150,185,240,.60);
+    --map-num: #dbe6f7;
+    --map-label: rgba(232,238,248,.78);
+  }
+}
+
+/* ============================================================
+   1. 基础
+   ============================================================ */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0;
+  font-family:var(--font);
+  font-size:16px;
+  line-height:1.6;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  overflow-x:hidden;
+}
+h1,h2,h3,h4,p,ul,ol{ margin:0; }
+ul,ol{ padding:0; list-style:none; }
+a{ color:inherit; }
+button{ font:inherit; color:inherit; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:6px; }
+
+/* 背景：柔和渐变 + 三团模糊色斑（纯 CSS，不加载图片） */
+.bg{
+  position:fixed; inset:0; z-index:-1; overflow:hidden;
+  background:linear-gradient(165deg,#eef4fd 0%,#f7f5f2 46%,#e9eff8 100%);
+}
+.blob{ position:absolute; border-radius:50%; filter:blur(72px); opacity:.62; }
+.b1{ width:72vmax; height:72vmax; left:-24vmax; top:-30vmax; background:#c9ddfb; }
+.b2{ width:52vmax; height:52vmax; right:-18vmax; top:-10vmax; background:#f9ddd0; opacity:.5; }
+.b3{ width:78vmax; height:78vmax; left:6vmax; bottom:-40vmax; background:#d6ece0; opacity:.55; }
+
+@media (prefers-color-scheme: dark){
+  .bg{ background:linear-gradient(165deg,#0a0c11 0%,#0e1118 50%,#0a0d13 100%); }
+  .b1{ background:#1b2b4a; opacity:.55; }
+  .b2{ background:#3a2430; opacity:.45; }
+  .b3{ background:#13302a; opacity:.5; }
+}
+
+/* 玻璃基类：整个页面只有「外层卡片」用它，避免层层 blur 拖慢手机 */
+.glass{
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(180%);
+  backdrop-filter:blur(var(--blur)) saturate(180%);
+  border:1px solid var(--glass-border);
+  box-shadow:var(--shadow), var(--glass-inset);
+}
+
+/* 布局容器 */
+.wrap{ width:100%; max-width:900px; margin:0 auto; padding-left:16px; padding-right:16px; }
+main.wrap{ padding-bottom:28px; }
+
+/* ============================================================
+   2. 顶部吸附栏
+   ============================================================ */
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);
+  backdrop-filter:blur(16px) saturate(180%);
+  border-bottom:1px solid rgba(255,255,255,.45);
+  box-shadow:0 1px 0 rgba(22,32,52,.05);
+}
+@media (prefers-color-scheme: dark){
+  .topbar{ background:rgba(12,14,20,.55); border-bottom-color:rgba(255,255,255,.08); }
+}
+.topbar-in{ display:flex; align-items:center; gap:10px; height:54px; }
+.brand{ font-size:13px; font-weight:600; letter-spacing:.02em; white-space:nowrap; }
+.brand span{ margin-left:8px; font-size:11px; font-weight:400; color:var(--ink-3); letter-spacing:.02em; }
+.btn{
+  -webkit-appearance:none; appearance:none;
+  margin-left:auto; flex:0 0 auto;
+  padding:7px 14px; border-radius:999px;
+  border:1px solid var(--glass-border);
+  background:var(--glass);
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+  box-shadow:var(--shadow-sm), var(--glass-inset);
+  font-size:12px; font-weight:500; letter-spacing:.02em;
+  cursor:pointer;
+  transition:transform .18s var(--ease), background .2s var(--ease);
+}
+.btn:hover{ background:var(--glass-strong); }
+.btn:active{ transform:scale(.96); }
+
+/* ============================================================
+   3. 首屏：行程总览
+   ============================================================ */
+.hero{ margin-top:14px; padding:24px 20px 22px; border-radius:var(--r-xl); }
+.kicker{ font-size:10px; font-weight:600; letter-spacing:.30em; color:var(--accent); }
+.hero h1{ margin-top:12px; font-size:clamp(26px,7.6vw,38px); line-height:1.18; letter-spacing:-.01em; }
+.hero h1 span{
+  display:block; margin-top:10px;
+  font-size:12px; font-weight:500; letter-spacing:.18em; color:var(--ink-3);
+}
+.hero-sub{ margin-top:14px; font-size:13px; color:var(--ink-2); }
+
+/* 路线概览：东京 → 长野 → 镰仓 → 东京 */
+.route{
+  position:relative;
+  display:grid; grid-template-columns:repeat(4,1fr);
+  margin:24px 0 0; text-align:center;
+}
+.route::before{
+  content:""; position:absolute; top:5px; left:12.5%; right:12.5%; height:1px;
+  background:linear-gradient(90deg,rgba(47,109,246,0),rgba(47,109,246,.35),rgba(47,109,246,0));
+}
+.route li{ position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.route i{
+  width:11px; height:11px; border-radius:50%;
+  background:#fff; border:2px solid var(--accent);
+  box-shadow:0 0 0 4px rgba(255,255,255,.55);
+}
+.route li:first-child i{ background:var(--accent); }
+@media (prefers-color-scheme: dark){
+  .route i{ background:#151a23; box-shadow:0 0 0 4px rgba(255,255,255,.06); }
+  .route li:first-child i{ background:var(--accent); }
+}
+.route b{ font-size:12.5px; font-weight:600; }
+.route span{ font-size:10px; color:var(--ink-3); letter-spacing:.01em; }
+
+.facts{ display:flex; flex-wrap:wrap; gap:7px; margin-top:20px; }
+.facts li{
+  display:flex; align-items:baseline; gap:4px;
+  padding:5px 11px; border-radius:999px;
+  background:var(--glass-2); border:1px solid var(--glass-border);
+  font-size:11px; color:var(--ink-3);
+}
+.facts b{ font-size:13px; font-weight:600; color:var(--ink); }
+
+/* ============================================================
+   4. 区块标题
+   ============================================================ */
+.sec-head{ margin:26px 4px 12px; }
+.sec-head h2{ font-size:16.5px; font-weight:600; letter-spacing:.01em; }
+.sec-head p{ margin-top:5px; font-size:12px; color:var(--ink-3); }
+
+/* ============================================================
+   5. 每日卡片（默认收起）
+   ============================================================ */
+.day{
+  position:relative;
+  margin-bottom:10px;
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  transition:border-color .25s var(--ease), box-shadow .25s var(--ease);
+}
+@media (hover:hover){ .day:hover{ border-color:rgba(255,255,255,.85); } }
+@media (prefers-color-scheme: dark){ .day:hover{ border-color:rgba(255,255,255,.22); } }
+.day.open{ box-shadow:var(--shadow-lg), var(--glass-inset); }
+
+/* 卡片头（整块可点） */
+.day-head{
+  -webkit-appearance:none; appearance:none;
+  display:flex; align-items:center; gap:12px; width:100%;
+  padding:14px;
+  border:0; background:transparent; text-align:left; cursor:pointer;
+  border-radius:var(--r-lg);
+  transition:background .2s var(--ease);
+  -webkit-tap-highlight-color:transparent;
+}
+.day-head:active{ background:var(--tap); }
+.day-num{
+  flex:0 0 auto; width:44px; height:44px; border-radius:14px;
+  display:grid; place-items:center;
+  font-size:12.5px; font-weight:700; letter-spacing:.02em; color:var(--accent);
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(255,255,255,.60));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.9), 0 2px 8px rgba(30,50,90,.08);
+  transition:transform .25s var(--ease);
+}
+@media (prefers-color-scheme: dark){
+  .day-num{ background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.06)); box-shadow:inset 0 0 0 1px rgba(255,255,255,.14); }
+}
+@media (hover:hover){ .day-head:hover .day-num{ transform:scale(1.05); } }
+
+.day-title{ display:flex; flex-direction:column; gap:2px; min-width:0; flex:1; }
+.day-date{ font-size:10.5px; font-weight:600; letter-spacing:.08em; color:var(--ink-3); }
+.day-theme{ font-size:14.5px; font-weight:600; letter-spacing:.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.day-dest{ font-size:11px; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.chev{
+  flex:0 0 auto; width:13px; height:8px;
+  stroke:var(--ink-3); stroke-width:1.7; fill:none;
+  stroke-linecap:round; stroke-linejoin:round;
+  transition:transform .4s var(--ease);
+}
+.day.open .chev{ transform:rotate(180deg); }
+
+/* 展开区：0fr → 1fr，纯 CSS 高度过渡，不用 JS 算高度 */
+.day-body{
+  display:grid; grid-template-rows:0fr;
+  visibility:hidden;
+  transition:grid-template-rows .46s var(--ease), visibility 0s linear .46s;
+}
+.day.open .day-body{ grid-template-rows:1fr; visibility:visible; transition:grid-template-rows .46s var(--ease), visibility 0s; }
+.day-body-inner{ overflow:hidden; min-height:0; }
+.day-inner{ padding:0 14px 16px; opacity:0; transform:translateY(-4px); transition:opacity .34s var(--ease) .06s, transform .34s var(--ease) .06s; }
+.day.open .day-inner{ opacity:1; transform:none; }
+
+/* 卡片顶部信息条：住宿 / 气温 / 强度 */
+.strip{ display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin:0 0 4px; }
+.strip div{
+  padding:8px 10px; border-radius:14px;
+  background:var(--glass-2); border:1px solid var(--glass-border);
+}
+.strip span{ display:block; font-size:9.5px; letter-spacing:.10em; color:var(--ink-3); }
+.strip b{ display:block; margin-top:2px; font-size:12px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+/* ============================================================
+   6. 卡片内的五个 module
+   ============================================================ */
+.mod{ padding:16px 0 2px; border-top:1px solid var(--hair); margin-top:14px; }
+.mod-title{
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:9px;
+  font-size:10.5px; font-weight:600; letter-spacing:.14em;
+  color:var(--ink-3); text-transform:uppercase;
+}
+.mod-title i{ font-style:normal; color:var(--accent); letter-spacing:.08em; }
+
+/* ① 动线示意图 */
+.map-wrap{
+  max-width:540px; margin:0 auto;
+  border-radius:var(--r-md); overflow:hidden;
+  border:1px solid var(--hair);
+  background-color:rgba(255,255,255,.36);
+  background-image:radial-gradient(var(--map-dot) 1px, transparent 1.1px);
+  background-size:14px 14px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+}
+@media (prefers-color-scheme: dark){ .map-wrap{ background-color:rgba(255,255,255,.04); box-shadow:inset 0 1px 0 rgba(255,255,255,.08); } }
+.map{ display:block; width:100%; height:auto; }
+.map text{ font-family:var(--font); }
+.map-route{
+  fill:none; stroke:var(--map-line); stroke-width:2;
+  stroke-dasharray:5 6; stroke-linecap:round;
+}
+.map-node{ fill:var(--map-node-bg); stroke:var(--map-node-line); stroke-width:1.6; }
+.map-node.start{ fill:var(--accent); stroke:none; }
+.map-num{
+  font-size:9px; font-weight:600; fill:var(--map-num);
+  text-anchor:middle; dominant-baseline:central;
+}
+.map-node.start + .map-num{ fill:#fff; }
+.map-label{ font-size:12px; font-weight:500; fill:var(--map-label); text-anchor:middle; }
+.map-note{ font-size:7.5px; fill:var(--ink-3); text-anchor:end; letter-spacing:.06em; }
+
+/* ② 景点与停留 */
+.poi li{ padding:10px 0; border-top:1px solid var(--hair); }
+.poi li:first-child{ border-top:0; padding-top:2px; }
+.poi-top{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.poi-top b{ font-size:13.5px; font-weight:600; }
+.stay{
+  padding:1px 7px; border-radius:999px;
+  background:var(--accent-soft); color:var(--accent);
+  font-size:10px; font-weight:600; white-space:nowrap;
+}
+.poi-link{
+  margin-left:auto; font-size:10.5px; color:var(--ink-3);
+  text-decoration:none; white-space:nowrap;
+  border-bottom:1px solid var(--hair); padding-bottom:1px;
+  transition:color .2s var(--ease), border-color .2s var(--ease);
+}
+.poi-link:hover{ color:var(--accent); border-color:var(--accent); }
+.poi-desc{ margin-top:4px; font-size:13px; line-height:1.62; color:var(--ink-2); }
+
+/* ③ 交通衔接 */
+.tr li{ padding:10px 0; border-top:1px solid var(--hair); }
+.tr li:first-child{ border-top:0; padding-top:2px; }
+.tr-top{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; font-size:12.5px; font-weight:600; }
+.tr-top .arrow{ color:var(--ink-3); font-weight:400; }
+.tr-time{ margin-left:auto; font-size:11px; font-weight:600; color:var(--accent); white-space:nowrap; }
+.tr-sub{ margin-top:3px; font-size:12px; line-height:1.6; color:var(--ink-3); }
+
+/* ④ 当日美食 */
+.food li{ padding:10px 0; border-top:1px solid var(--hair); }
+.food li:first-child{ border-top:0; padding-top:2px; }
+.food-top{ display:flex; align-items:baseline; gap:8px; }
+.food-top b{ font-size:13.5px; font-weight:600; }
+.food-when{ margin-left:auto; font-size:10px; color:var(--ink-3); white-space:nowrap; }
+.food p{ margin-top:3px; font-size:13px; line-height:1.6; color:var(--ink-2); }
+
+/* ⑤ 当日贴士 */
+.tips li{
+  position:relative; padding:5px 0 5px 14px;
+  font-size:12.5px; line-height:1.65; color:var(--ink-2);
+}
+.tips li::before{
+  content:""; position:absolute; left:0; top:12px;
+  width:4px; height:4px; border-radius:50%;
+  background:var(--accent); opacity:.55;
+}
+
+/* 个人备注占位 */
+.note-row{
+  display:flex; align-items:center; gap:8px;
+  margin-top:14px; padding-top:12px;
+  border-top:1px solid var(--hair);
+  font-size:10.5px; letter-spacing:.06em; color:var(--ink-3);
+}
+.ph{
+  padding:1px 8px; border-radius:8px;
+  border:1px dashed var(--ink-3);
+  font-size:10.5px; letter-spacing:0;
+}
+
+/* ============================================================
+   7. 底部通用贴士
+   ============================================================ */
+.global{ margin-top:30px; }
+.tipgrid{ display:grid; gap:10px; }
+.tipcard{ padding:19px 17px; border-radius:var(--r-lg); }
+.tipcard h3{ font-size:14.5px; font-weight:600; letter-spacing:.01em; }
+.tipcard .sub{ margin-top:5px; font-size:11px; color:var(--ink-3); }
+
+/* 勾选清单 */
+.clist{ margin-top:10px; }
+.clist li{ border-top:1px solid var(--hair); }
+.clist li:first-child{ border-top:0; }
+.clist label{ display:flex; gap:9px; align-items:flex-start; padding:8px 0; cursor:pointer; font-size:12.5px; line-height:1.6; color:var(--ink-2); }
+input[type="checkbox"]{
+  -webkit-appearance:none; appearance:none;
+  flex:0 0 auto; width:17px; height:17px; margin:0;
+  border-radius:6px; border:1.5px solid var(--ink-3);
+  background-color:rgba(255,255,255,.55);
+  cursor:pointer;
+  transition:background-color .16s var(--ease), border-color .16s var(--ease);
+}
+@media (prefers-color-scheme: dark){ input[type="checkbox"]{ background-color:rgba(255,255,255,.06); } }
+input[type="checkbox"]:checked{
+  border-color:var(--accent);
+  background-color:var(--accent);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.4 4.7 9 10 3.2' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:center; background-size:11px 11px;
+}
+input[type="checkbox"]:checked + span{ color:var(--ink-3); text-decoration:line-through; }
+
+/* 规则列表 */
+.rlist{ margin-top:8px; }
+.rlist li{ padding:9px 0; border-top:1px solid var(--hair); }
+.rlist li:first-child{ border-top:0; }
+.rlist b{ display:block; font-size:12px; font-weight:600; }
+.rlist span{ display:block; margin-top:2px; font-size:11.5px; line-height:1.6; color:var(--ink-3); }
+
+.bar-line{ margin-top:12px; font-size:11px; color:var(--ink-3); }
+.bar-line b{ color:var(--accent); font-weight:600; font-variant-numeric:tabular-nums; }
+
+.disclaimer{
+  margin:18px 0 0; padding:13px 15px;
+  border-radius:var(--r-md);
+  border:1px dashed var(--hair);
+  font-size:11px; line-height:1.7; color:var(--ink-3);
+}
+
+/* ============================================================
+   8. 页脚
+   ============================================================ */
+footer{ padding-top:26px; padding-bottom:40px; }
+footer p{ font-size:10.5px; line-height:1.8; color:var(--ink-3); }
+footer p + p{ margin-top:2px; }
+
+/* ============================================================
+   9. 断点 & 动效降级
+   ============================================================ */
+@media (min-width:600px){
+  .wrap{ padding-left:24px; padding-right:24px; }
+  .hero{ padding:32px 30px 28px; }
+  .hero h1 span{ font-size:13px; }
+  .day-head{ padding:16px 18px; gap:14px; }
+  .day-inner{ padding:0 18px 18px; }
+  .day-theme{ font-size:15.5px; }
+  .day-num{ width:48px; height:48px; font-size:13px; }
+  .strip div{ padding:9px 12px; }
+  .tipgrid{ grid-template-columns:1fr 1fr; }
+  .tipgrid .tipcard:nth-child(3){ grid-column:1 / -1; }
+}
+@media (min-width:900px){
+  .hero h1{ font-size:40px; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition-duration:.01ms !important; }
+  .day-body{ transition:none; }
+}
+
+/* 首屏轻微上浮（只跑一次） */
+@keyframes rise{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.hero{ animation:rise .6s var(--ease) both; }
+</style>
+</head>
+<body>
+
+<!-- 背景层：渐变 + 色斑 -->
+<div class="bg" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+
+<!-- ============================ 顶部吸附栏 ============================ -->
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">冬の日本<span>12.22 – 12.31</span></div>
+    <button class="btn" id="toggleAll" type="button" aria-pressed="false">全部展开</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============================ 行程总览 ============================ -->
+  <section class="hero glass">
+    <p class="kicker">JAPAN · WINTER 2026</p>
+    <h1>冬の日本<span>东京 · 长野 · 镰仓 10 日</span></h1>
+    <p class="hero-sub">12 月 22 日 — 12 月 31 日 · 羽田进出 · 长野 3 晚 + 镰仓 1 晚</p>
+
+    <ul class="route">
+      <li><i></i><b>东京</b><span>12.22</span></li>
+      <li><i></i><b>长野</b><span>12.23–25</span></li>
+      <li><i></i><b>镰仓</b><span>12.26</span></li>
+      <li><i></i><b>东京</b><span>12.27–31</span></li>
+    </ul>
+
+    <ul class="facts">
+      <li><b>10</b>天</li>
+      <li><b>3</b>座城市</li>
+      <li><b>9</b>晚住宿</li>
+      <li><b>3</b>段城际</li>
+    </ul>
+  </section>
+
+  <div class="sec-head">
+    <h2>每日行程</h2>
+    <p>点开任意卡片展开当天攻略，再点一次收起。</p>
+  </div>
+
+  <!-- ============================================================
+       D1 · 12/22 周二 · 抵达东京
+       ============================================================ -->
+  <article class="day glass" id="d1" data-day="1">
+    <button class="day-head" id="d1btn" type="button" aria-expanded="false" aria-controls="d1body">
+      <span class="day-num">D1</span>
+      <span class="day-title">
+        <span class="day-date">12/22 周二</span>
+        <span class="day-theme">抵达东京 · 羽田落地</span>
+        <span class="day-dest">羽田机场 · 市区酒店 · 夜间散步</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d1body" role="region" aria-labelledby="d1btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>东京 · 待定</b></div>
+            <div><span>气温</span><b>约 6–12℃</b></div>
+            <div><span>强度</span><b>低</b></div>
+          </div>
+
+          <!-- ① 动线示意 -->
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D1 动线：羽田机场 → 市区酒店 → 夜间散步">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">羽田机场</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">市区酒店</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">夜间散步</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <!-- ② 景点与停留 -->
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>羽田机场 T3</b><span class="stay">停留 1h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">入境、取行李、买交通卡。国际到达在 3 号航站楼，出发层有观景台可看飞机。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>市区酒店</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">办入住、放行李；周边便利店与药妆店补齐水、早餐、暖宝宝。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>夜间散步（可选）</b><span class="stay">停留 1.5h</span></div>
+                <p class="poi-desc">若 15:00 前落地，可去涩谷或新宿看夜景；晚到就只在酒店附近吃个饭。</p>
+              </li>
+            </ul>
+          </section>
+
+          <!-- ③ 交通衔接 -->
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>羽田机场</span><span class="arrow">→</span><span>市区</span><span class="tr-time">约 30–60 分</span></div>
+                <p class="tr-sub">京急线 / 东京单轨 / 机场大巴，约 ¥500 起；行李多走大巴最省力。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>市区内</span><span class="arrow">→</span><span>酒店</span><span class="tr-time">按距离</span></div>
+                <p class="tr-sub">地铁 / JR，单程约 ¥180 起；Suica 手机钱包可直接刷。</p>
+              </li>
+            </ul>
+          </section>
+
+          <!-- ④ 当日美食 -->
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>机场 3F「江户小路」</b><span class="food-when">落地第一餐</span></div>
+                <p>拉面、寿司、亲子丼都有，营业到晚上，适合拖着行李吃。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>酒店周边居酒屋</b><span class="food-when">晚餐</span></div>
+                <p>就近吃、不折腾；12 月夜里冷，暖锅类最舒服。</p>
+              </li>
+            </ul>
+          </section>
+
+          <!-- ⑤ 当日贴士 -->
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>入境高峰可能排队 1 小时以上，行程别排太紧。</li>
+              <li>Suica / PASMO 可在机场买实体卡，也可直接用手机钱包开通。</li>
+              <li>当天只做「落地 + 安顿」，别排硬景点。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D2 · 12/23 周三 · 东京 → 长野
+       ============================================================ -->
+  <article class="day glass" id="d2" data-day="2">
+    <button class="day-head" id="d2btn" type="button" aria-expanded="false" aria-controls="d2body">
+      <span class="day-num">D2</span>
+      <span class="day-title">
+        <span class="day-date">12/23 周三</span>
+        <span class="day-theme">北上长野 · 善光寺参道</span>
+        <span class="day-dest">东京站 · 长野站 · 善光寺</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d2body" role="region" aria-labelledby="d2btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>长野 · 1/3</b></div>
+            <div><span>气温</span><b>约 -2–7℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D2 动线：东京站 → 长野站 → 善光寺 → 长野住宿">
+                <path class="map-route" d="M48 88 C90 88 108 70 142 70 C176 70 202 86 236 86 C270 86 288 68 312 68"/>
+                <circle class="map-node start" cx="48" cy="88" r="7"/>
+                <text class="map-num" x="48" y="88">1</text>
+                <text class="map-label" x="48" y="110">东京站</text>
+                <circle class="map-node" cx="142" cy="70" r="7"/>
+                <text class="map-num" x="142" y="70">2</text>
+                <text class="map-label" x="142" y="52">长野站</text>
+                <circle class="map-node" cx="236" cy="86" r="7"/>
+                <text class="map-num" x="236" y="86">3</text>
+                <text class="map-label" x="236" y="108">善光寺</text>
+                <circle class="map-node" cx="312" cy="68" r="7"/>
+                <text class="map-num" x="312" y="68">4</text>
+                <text class="map-label" x="312" y="50">长野住宿</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>善光寺</b><span class="stay">停留 1.5h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%96%84%E5%85%89%E5%AF%BA" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">国宝正殿，参拜免费；冬季 16:00 前后关门，下午要早点到。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>仲见世通</b><span class="stay">停留 40min</span></div>
+                <p class="poi-desc">表参道商店街，七味粉、栗子点心、荞麦店都在这条街上。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>长野站前</b><span class="stay">停留 40min</span></div>
+                <p class="poi-desc">补给点和巴士总站，第二天去户隐 / 汤田中的车都在这里坐。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>东京站</span><span class="arrow">→</span><span>长野站</span><span class="tr-time">约 1h20–1h50</span></div>
+                <p class="tr-sub">北陆新干线（はくたか / あさま），指定席约 ¥8,000；12/23 起返乡高峰，尽早订座。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>长野站</span><span class="arrow">→</span><span>善光寺</span><span class="tr-time">约 10 分</span></div>
+                <p class="tr-sub">善光寺行巴士约 ¥150，或步行 20 分钟；回程留意末班车。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>信州荞麦（ざるそば）</b><span class="food-when">午餐</span></div>
+                <p>善光寺参道周边老铺集中，荞麦香气重，配山葵和葱。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>おやき（烤荞麦团子）</b><span class="food-when">边走边吃</span></div>
+                <p>野泽菜、南瓜馅最常见，冬天热乎乎的很顶饱。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>上午退房后把大件行李宅急便直送长野酒店，换乘轻松很多。</li>
+              <li>长野站前有积雪和结冰，防滑鞋底很重要。</li>
+              <li>天黑约 16:40，善光寺一带 16:00 后就没什么可逛了。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D3 · 12/24 周四 · 长野 · 户隐
+       ============================================================ -->
+  <article class="day glass" id="d3" data-day="3">
+    <button class="day-head" id="d3btn" type="button" aria-expanded="false" aria-controls="d3body">
+      <span class="day-num">D3</span>
+      <span class="day-title">
+        <span class="day-date">12/24 周四</span>
+        <span class="day-theme">雪中户隐 · 杉并木参道</span>
+        <span class="day-dest">户隐中社 · 奥社参道 · 荞麦午餐</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d3body" role="region" aria-labelledby="d3btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>长野 · 2/3</b></div>
+            <div><span>气温</span><b>约 -4–4℃</b></div>
+            <div><span>强度</span><b>中高</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D3 动线：长野站 → 户隐中社 → 奥社参道">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">长野站</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">户隐中社</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">奥社参道</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>户隐神社 中社</b><span class="stay">停留 40min</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%88%B8%E9%9A%A0%E7%A5%9E%E7%A4%BE" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">巴士终点站旁，境内雪景安静；社务所可买御守。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>奥社参道 · 杉并木</b><span class="stay">停留 1.5h</span></div>
+                <p class="poi-desc">约 500 米参道两侧是数百年杉树，冬季积雪深，需防滑鞋或长靴。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>镜池（可选）</b><span class="stay">停留 30min</span></div>
+                <p class="poi-desc">时间够再去，冬季结冰、路面滑，走到池边就够了。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>长野站</span><span class="arrow">→</span><span>户隐中社</span><span class="tr-time">约 60 分</span></div>
+                <p class="tr-sub">Alpico 巴士，单程约 ¥1,600；冬季班次减少，先在站内确认返程时刻。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>中社</span><span class="arrow">→</span><span>奥社参道</span><span class="tr-time">约 40 分</span></div>
+                <p class="tr-sub">步行，冬季路面结冰，留足时间，别赶。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>户隐荞麦</b><span class="food-when">午餐</span></div>
+                <p>信州三大荞麦之一，多见「竹筒荞麦」，中社周边就有店。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>山菜天妇罗 / 荞麦团子</b><span class="food-when">下午茶</span></div>
+                <p>山里口味偏咸香，配热茶很合适。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>山上比市区低 5℃ 以上，风大，帽子和手套别落下。</li>
+              <li>巴士约 1 小时一班，错过末班很麻烦，先拍下时刻表。</li>
+              <li>参道雪深，可租雪靴；相机注意结露。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D4 · 12/25 周五 · 长野 · 雪猴与温泉
+       ============================================================ -->
+  <article class="day glass" id="d4" data-day="4">
+    <button class="day-head" id="d4btn" type="button" aria-expanded="false" aria-controls="d4body">
+      <span class="day-num">D4</span>
+      <span class="day-title">
+        <span class="day-date">12/25 周五</span>
+        <span class="day-theme">雪猴泡汤 · 汤田中温泉</span>
+        <span class="day-dest">地狱谷野猿公苑 · 汤田中 · 涩温泉</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d4body" role="region" aria-labelledby="d4btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>长野 · 3/3</b></div>
+            <div><span>气温</span><b>约 -5–3℃</b></div>
+            <div><span>强度</span><b>中高</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D4 动线：长野站 → 汤田中 → 雪猴公园 → 涩温泉">
+                <path class="map-route" d="M48 88 C90 88 108 70 142 70 C176 70 202 86 236 86 C270 86 288 68 312 68"/>
+                <circle class="map-node start" cx="48" cy="88" r="7"/>
+                <text class="map-num" x="48" y="88">1</text>
+                <text class="map-label" x="48" y="110">长野站</text>
+                <circle class="map-node" cx="142" cy="70" r="7"/>
+                <text class="map-num" x="142" y="70">2</text>
+                <text class="map-label" x="142" y="52">汤田中</text>
+                <circle class="map-node" cx="236" cy="86" r="7"/>
+                <text class="map-num" x="236" y="86">3</text>
+                <text class="map-label" x="236" y="108">雪猴公园</text>
+                <circle class="map-node" cx="312" cy="68" r="7"/>
+                <text class="map-num" x="312" y="68">4</text>
+                <text class="map-label" x="312" y="50">涩温泉</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>地狱谷野猿公苑</b><span class="stay">停留 2h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%9C%B0%E7%8D%84%E8%B0%B7%E9%87%8E%E7%8C%BF%E5%85%AC%E8%8B%91" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">看雪猴泡温泉，门票约 ¥800；从停车场步行约 30 分钟林道，来回 1 小时。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>汤田中温泉街</b><span class="stay">停留 40min</span></div>
+                <p class="poi-desc">小站前有免费足汤，冬天泡脚回血；温泉馒头现蒸的最好。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>涩温泉「九汤巡游」</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">外汤巡游需买木牌钥匙，部分汤只对住宿客开放，去前确认。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>长野站</span><span class="arrow">→</span><span>汤田中</span><span class="tr-time">约 45 分</span></div>
+                <p class="tr-sub">长野电铁，约 ¥1,300；沿途雪景不错，靠窗坐。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>汤田中站</span><span class="arrow">→</span><span>雪猴公园</span><span class="tr-time">约 45 分</span></div>
+                <p class="tr-sub">巴士约 15 分 + 步行 30 分；巴士班次少，先记返程时间。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>温泉旅馆午餐</b><span class="food-when">午餐</span></div>
+                <p>可找提供「日归入浴 + 午餐」的旅馆，泡完再吃，最省事。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>温泉馒头 / 荞麦</b><span class="food-when">小吃</span></div>
+                <p>温泉街边走边吃，热的最好吃，别买太多带回。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>12/25 前后日本开始放假，温泉旅馆容易满房，越早订越好。</li>
+              <li>林道结冰，公园入口有防滑鞋租借，别穿小白鞋。</li>
+              <li>雪猴公园禁止投喂、别靠太近，长焦比凑近拍更好。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D5 · 12/26 周六 · 长野 → 镰仓
+       ============================================================ -->
+  <article class="day glass" id="d5" data-day="5">
+    <button class="day-head" id="d5btn" type="button" aria-expanded="false" aria-controls="d5body">
+      <span class="day-num">D5</span>
+      <span class="day-title">
+        <span class="day-date">12/26 周六</span>
+        <span class="day-theme">移动日 · 镰仓小町通</span>
+        <span class="day-dest">长野站 · 东京站换乘 · 镰仓</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d5body" role="region" aria-labelledby="d5btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>镰仓 · 1/1</b></div>
+            <div><span>气温</span><b>约 4–11℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D5 动线：长野站 → 东京站换乘 → 镰仓站 → 小町通">
+                <path class="map-route" d="M48 88 C90 88 108 70 142 70 C176 70 202 86 236 86 C270 86 288 68 312 68"/>
+                <circle class="map-node start" cx="48" cy="88" r="7"/>
+                <text class="map-num" x="48" y="88">1</text>
+                <text class="map-label" x="48" y="110">长野站</text>
+                <circle class="map-node" cx="142" cy="70" r="7"/>
+                <text class="map-num" x="142" y="70">2</text>
+                <text class="map-label" x="142" y="52">东京站</text>
+                <circle class="map-node" cx="236" cy="86" r="7"/>
+                <text class="map-num" x="236" y="86">3</text>
+                <text class="map-label" x="236" y="108">镰仓站</text>
+                <circle class="map-node" cx="312" cy="68" r="7"/>
+                <text class="map-num" x="312" y="68">4</text>
+                <text class="map-label" x="312" y="50">小町通</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>小町通</b><span class="stay">停留 1h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%B0%8F%E7%94%BA%E9%80%9A" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">车站出来就是，伴手礼和小吃一条街，傍晚最热闹。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>鹤冈八幡宫</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">从小町通步行 10 分钟，段葛参道冬天很空，适合散步。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>由比滨海岸（可选）</b><span class="stay">停留 30min</span></div>
+                <p class="poi-desc">到得早再去，日落时海面颜色好，风大注意保暖。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>长野站</span><span class="arrow">→</span><span>东京站</span><span class="tr-time">约 1h30</span></div>
+                <p class="tr-sub">北陆新干线，回到东京后先寄存或转寄行李。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>东京站</span><span class="arrow">→</span><span>镰仓站</span><span class="tr-time">约 55 分</span></div>
+                <p class="tr-sub">JR 横须贺线，不用换乘；换乘留 20 分钟缓冲。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>しらす丼（吻仔鱼）</b><span class="food-when">晚餐</span></div>
+                <p>冬季多提供「釜揚げ」（熟），口感更温和；生食版本看季节。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>小町通小吃</b><span class="food-when">下午</span></div>
+                <p>可乐饼、抹茶甜品、镰仓蔬菜点心，边走边吃很方便。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>镰仓住宿少、价格高，越早订越好；车站周边最方便。</li>
+              <li>大件行李用宅急便直送镰仓酒店，别拖着换乘。</li>
+              <li>12/26 起日本进入年末，部分小店会提前休业。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D6 · 12/27 周日 · 镰仓 → 东京
+       ============================================================ -->
+  <article class="day glass" id="d6" data-day="6">
+    <button class="day-head" id="d6btn" type="button" aria-expanded="false" aria-controls="d6body">
+      <span class="day-num">D6</span>
+      <span class="day-title">
+        <span class="day-date">12/27 周日</span>
+        <span class="day-theme">江之电 · 大佛与海</span>
+        <span class="day-dest">长谷 · 高德院 · 镰仓高校前</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d6body" role="region" aria-labelledby="d6btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>东京 · 待定</b></div>
+            <div><span>气温</span><b>约 4–11℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D6 动线：镰仓站 → 长谷大佛 → 镰仓高校前 → 东京住宿">
+                <path class="map-route" d="M48 88 C90 88 108 70 142 70 C176 70 202 86 236 86 C270 86 288 68 312 68"/>
+                <circle class="map-node start" cx="48" cy="88" r="7"/>
+                <text class="map-num" x="48" y="88">1</text>
+                <text class="map-label" x="48" y="110">镰仓站</text>
+                <circle class="map-node" cx="142" cy="70" r="7"/>
+                <text class="map-num" x="142" y="70">2</text>
+                <text class="map-label" x="142" y="52">长谷大佛</text>
+                <circle class="map-node" cx="236" cy="86" r="7"/>
+                <text class="map-num" x="236" y="86">3</text>
+                <text class="map-label" x="236" y="108">镰仓高校前</text>
+                <circle class="map-node" cx="312" cy="68" r="7"/>
+                <text class="map-num" x="312" y="68">4</text>
+                <text class="map-label" x="312" y="50">东京住宿</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>高德院 · 镰仓大佛</b><span class="stay">停留 30min</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%AB%98%E5%BE%B3%E9%99%A2" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">露天大佛，门票约 ¥300；清晨人最少，光线也最好。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>长谷寺</b><span class="stay">停留 50min</span></div>
+                <p class="poi-desc">门票约 ¥400，见晴台可看海；冬季紫阳花没有，但视野安静。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>江之电 · 镰仓高校前</b><span class="stay">停留 20min</span></div>
+                <p class="poi-desc">经典平交道拍照点，周末人多且车流不断，注意安全。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>镰仓站</span><span class="arrow">→</span><span>长谷</span><span class="tr-time">约 5 分</span></div>
+                <p class="tr-sub">江之电一日券「のりおりくん」约 ¥800，当天随便上下。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>镰仓站</span><span class="arrow">→</span><span>东京站</span><span class="tr-time">约 55 分</span></div>
+                <p class="tr-sub">JR 横须贺线；回东京前把行李从酒店取好或寄到下一站。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>しらす 生 / 釜揚げ</b><span class="food-when">午餐</span></div>
+                <p>两种各点一份对比；冬季以熟食为主，肠胃更稳。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>长谷站周边咖啡</b><span class="food-when">下午</span></div>
+                <p>逛累了找家小店坐一下，比排队网红店舒服。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>周日江之电非常挤，尽量 9:00 前出发。</li>
+              <li>平交道拍照别站到车道，也别堵住居民出入口。</li>
+              <li>镰仓靠海风大，体感比东京低，围巾用得上。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D7 · 12/28 周一 · 东京 · 浅草上野
+       ============================================================ -->
+  <article class="day glass" id="d7" data-day="7">
+    <button class="day-head" id="d7btn" type="button" aria-expanded="false" aria-controls="d7body">
+      <span class="day-num">D7</span>
+      <span class="day-title">
+        <span class="day-date">12/28 周一</span>
+        <span class="day-theme">下町散步 · 浅草上野</span>
+        <span class="day-dest">浅草寺 · 上野 · 阿美横町</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d7body" role="region" aria-labelledby="d7btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>东京</b></div>
+            <div><span>气温</span><b>约 5–12℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D7 动线：浅草 → 上野 → 阿美横町">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">浅草</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">上野</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">阿美横町</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>浅草寺 · 仲见世</b><span class="stay">停留 1.5h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%B5%85%E8%8D%89%E5%AF%BA" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">6:00 开门，越早越空；雷门 → 仲见世 → 本堂一条线走完。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>上野公园 · 不忍池</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">公园大、冬天树秃但通透；美术馆群在园内，年末多休馆。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>阿美横町</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">零食、药妆、海鲜干货集中，价格比游客区实在，现金更快。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>浅草</span><span class="arrow">→</span><span>上野</span><span class="tr-time">约 5 分</span></div>
+                <p class="tr-sub">地铁银座线，3 站，约 ¥180。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>上野</span><span class="arrow">→</span><span>酒店</span><span class="tr-time">15–25 分</span></div>
+                <p class="tr-sub">JR / 地铁，视住宿位置；晚上回来避开 18:00 通勤高峰。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>天妇罗（浅草老铺）</b><span class="food-when">午餐</span></div>
+                <p>午市比晚市便宜，排队 30 分钟属正常。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>鳗鱼饭 / 炸猪排</b><span class="food-when">午餐备选</span></div>
+                <p>上野一带选择多，年末人多，尽量 11:30 前进店。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>12/28 是日本年内最后一个工作日，晚上居酒屋很挤。</li>
+              <li>东京国立博物馆年末年始休馆，想去先查官网。</li>
+              <li>浅草寺周边人多，背包前背，别边走边吃。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D8 · 12/29 周二 · 东京 · 神宫原宿涩谷
+       ============================================================ -->
+  <article class="day glass" id="d8" data-day="8">
+    <button class="day-head" id="d8btn" type="button" aria-expanded="false" aria-controls="d8body">
+      <span class="day-num">D8</span>
+      <span class="day-title">
+        <span class="day-date">12/29 周二</span>
+        <span class="day-theme">神宫原宿 · 涩谷夜景</span>
+        <span class="day-dest">明治神宫 · 表参道 · 涩谷</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d8body" role="region" aria-labelledby="d8btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>东京</b></div>
+            <div><span>气温</span><b>约 5–12℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D8 动线：原宿 → 明治神宫 → 涩谷">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">原宿</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">明治神宫</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">涩谷</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>明治神宫</b><span class="stay">停留 1.5h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E6%98%8E%E6%B2%BB%E7%A5%9E%E5%AE%AE" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">原宿站旁，参道很长；年末初诣准备期，人流会变多。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>表参道</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">建筑和旗舰店集中，走路拍照为主，累了就进咖啡店。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>涩谷 SHIBUYA SKY</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">日落时段最抢手，必须提前官网订票；风大，别穿太少。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>原宿</span><span class="arrow">→</span><span>涩谷</span><span class="tr-time">约 5 分</span></div>
+                <p class="tr-sub">JR 山手线一站；人多时走路也就 20 分钟。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>涩谷</span><span class="arrow">→</span><span>酒店</span><span class="tr-time">15–25 分</span></div>
+                <p class="tr-sub">地铁 / JR；涩谷站出口多，认「ハチ公口」最不容易迷路。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>原宿 可丽饼 / 咖啡</b><span class="food-when">下午</span></div>
+                <p>竹下通人多，找巷子里的小店更快坐下。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>涩谷 拉面 / 烧鸟</b><span class="food-when">晚餐</span></div>
+                <p>看完夜景就近吃，避开 19:00 高峰不用排太久。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>12/29 起日本放假，原宿一带人非常多，早出门。</li>
+              <li>明治神宫是初诣热门地，1/1 前后会限流，注意指引。</li>
+              <li>SHIBUYA SKY 需预约，雨天可能关闭屋顶，备个 B 计划。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D9 · 12/30 周三 · 东京 · 购物收尾
+       ============================================================ -->
+  <article class="day glass" id="d9" data-day="9">
+    <button class="day-head" id="d9btn" type="button" aria-expanded="false" aria-controls="d9body">
+      <span class="day-num">D9</span>
+      <span class="day-title">
+        <span class="day-date">12/30 周三</span>
+        <span class="day-theme">购物退税 · 夜景收尾</span>
+        <span class="day-dest">银座 · 新宿 · 六本木</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d9body" role="region" aria-labelledby="d9btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>东京</b></div>
+            <div><span>气温</span><b>约 5–12℃</b></div>
+            <div><span>强度</span><b>中</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D9 动线：银座 → 新宿 → 六本木">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">银座</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">新宿</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">六本木</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>银座</b><span class="stay">停留 2h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E9%8A%80%E5%BA%A7" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">百货与旗舰店集中，退税柜台在店内办，护照记得随身。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>新宿</b><span class="stay">停留 2h</span></div>
+                <p class="poi-desc">药妆、电器、杂货一次买齐；大店退税排队时间要算进去。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>六本木夜景</b><span class="stay">停留 1h</span></div>
+                <p class="poi-desc">看东京塔机位，商场高层展望台营业到较晚，适合收尾。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>银座</span><span class="arrow">→</span><span>新宿</span><span class="tr-time">约 20 分</span></div>
+                <p class="tr-sub">地铁丸之内线，直达不换乘。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>新宿</span><span class="arrow">→</span><span>六本木</span><span class="tr-time">约 15 分</span></div>
+                <p class="tr-sub">都营大江户线；新宿站很大，留 10 分钟找站台。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>百货餐厅层</b><span class="food-when">午餐</span></div>
+                <p>银座百货楼上选择多、不踩雷，比街头排队稳。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>六本木晚餐</b><span class="food-when">晚餐</span></div>
+                <p>吃完直接上展望台；想省钱就在地铁站周边吃定食。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>退税要护照原件，当日购买当日办，别攒到最后。</li>
+              <li>12/31 百货多半提前打烊，采购不要拖到第二天。</li>
+              <li>行李先称重，超重在机场买行李额会贵很多。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       D10 · 12/31 周四 · 返程
+       ============================================================ -->
+  <article class="day glass" id="d10" data-day="10">
+    <button class="day-head" id="d10btn" type="button" aria-expanded="false" aria-controls="d10body">
+      <span class="day-num">D10</span>
+      <span class="day-title">
+        <span class="day-date">12/31 周四</span>
+        <span class="day-theme">大晦日 · 羽田返程</span>
+        <span class="day-dest">酒店 · 羽田机场 · 登机</span>
+      </span>
+      <svg class="chev" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+    </button>
+
+    <div class="day-body" id="d10body" role="region" aria-labelledby="d10btn">
+      <div class="day-body-inner">
+        <div class="day-inner">
+          <div class="strip">
+            <div><span>住宿</span><b>返程 · 无</b></div>
+            <div><span>气温</span><b>约 5–12℃</b></div>
+            <div><span>强度</span><b>低</b></div>
+          </div>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>01</i>动线示意</h3>
+            <div class="map-wrap">
+              <svg class="map" viewBox="0 0 360 150" role="img" aria-label="D10 动线：酒店 → 羽田机场 → 登机口">
+                <path class="map-route" d="M60 86 C104 86 138 70 184 70 C230 70 262 86 306 86"/>
+                <circle class="map-node start" cx="60" cy="86" r="7"/>
+                <text class="map-num" x="60" y="86">1</text>
+                <text class="map-label" x="60" y="108">酒店</text>
+                <circle class="map-node" cx="184" cy="70" r="7"/>
+                <text class="map-num" x="184" y="70">2</text>
+                <text class="map-label" x="184" y="52">羽田机场</text>
+                <circle class="map-node" cx="306" cy="86" r="7"/>
+                <text class="map-num" x="306" y="86">3</text>
+                <text class="map-label" x="306" y="108">登机口</text>
+                <text class="map-note" x="352" y="142">示意 · 非比例</text>
+              </svg>
+            </div>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>02</i>景点与停留</h3>
+            <ul class="poi">
+              <li>
+                <div class="poi-top">
+                  <b>酒店周边</b><span class="stay">停留 1h</span>
+                  <a class="poi-link" href="https://www.google.com/maps/search/?api=1&amp;query=%E7%BE%BD%E7%94%B0%E7%A9%BA%E6%B8%AF" target="_blank" rel="noopener">地图</a>
+                </div>
+                <p class="poi-desc">退房、早餐、最后补货；12/31 部分店铺提前打烊，上午解决。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>羽田机场 T3</b><span class="stay">停留 1.5h</span></div>
+                <p class="poi-desc">退税盖章、伴手礼、观景台；国际出发层餐厅也不少。</p>
+              </li>
+              <li>
+                <div class="poi-top"><b>登机口</b><span class="stay">提前 3h 到</span></div>
+                <p class="poi-desc">大晦日机场人多，安检排队时间按最坏情况算。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>03</i>交通衔接</h3>
+            <ul class="tr">
+              <li>
+                <div class="tr-top"><span>市区</span><span class="arrow">→</span><span>羽田机场</span><span class="tr-time">约 30–60 分</span></div>
+                <p class="tr-sub">京急线 / 东京单轨；行李多可用机场大巴，直达出发层。</p>
+              </li>
+              <li>
+                <div class="tr-top"><span>机场</span><span class="arrow">→</span><span>登机口</span><span class="tr-time">约 40 分</span></div>
+                <p class="tr-sub">值机 → 安检 → 出境，年末预留更宽裕的时间。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>04</i>当日美食</h3>
+            <ul class="food">
+              <li>
+                <div class="food-top"><b>机场「江户小路」</b><span class="food-when">午餐</span></div>
+                <p>登机前最后一顿日料，价格略高但省事。</p>
+              </li>
+              <li>
+                <div class="food-top"><b>便利店 / 伴手礼</b><span class="food-when">机上</span></div>
+                <p>买点饭团和甜点上飞机，比机上餐更对胃口。</p>
+              </li>
+            </ul>
+          </section>
+
+          <section class="mod">
+            <h3 class="mod-title"><i>05</i>当日贴士</h3>
+            <ul class="tips">
+              <li>12/31 是日本除夕，神社初诣人潮大，别临时改去景点。</li>
+              <li>免税品封装袋不要拆，海关可能抽查。</li>
+              <li>充电宝随身、不可托运；液体按规定分装。</li>
+            </ul>
+          </section>
+
+          <p class="note-row">个人备注<span class="ph">待补充</span></p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- ============================================================
+       底部：通用贴士（出行准备 / 交通规则 / 物品清单）
+       ============================================================ -->
+  <section class="global">
+    <div class="sec-head">
+      <h2>出行贴士</h2>
+      <p>全局通用：准备事项、交通规则与物品清单。</p>
+    </div>
+
+    <div class="tipgrid">
+      <article class="tipcard glass">
+        <h3>出行准备</h3>
+        <p class="sub">出发前搞定，落地不慌</p>
+        <ul class="clist" id="prepList">
+          <li><label><input type="checkbox" data-k="prep-1"><span>护照有效期 ≥ 6 个月，签证 / 入境手续确认</span></label></li>
+          <li><label><input type="checkbox" data-k="prep-2"><span>机票、酒店确认单（离线存一份）</span></label></li>
+          <li><label><input type="checkbox" data-k="prep-3"><span>日元现金 3–5 万 + 可用的信用卡</span></label></li>
+          <li><label><input type="checkbox" data-k="prep-4"><span>新干线车票（12/23 前订指定席）</span></label></li>
+          <li><label><input type="checkbox" data-k="prep-5"><span>旅行保险、常用药</span></label></li>
+          <li><label><input type="checkbox" data-k="prep-6"><span>eSIM / 随身 WiFi 已开通</span></label></li>
+        </ul>
+        <p class="bar-line">已勾选 <b id="prepBar">0 / 6</b></p>
+      </article>
+
+      <article class="tipcard glass">
+        <h3>交通与规则</h3>
+        <p class="sub">日本坐车的基本常识</p>
+        <ul class="rlist">
+          <li><b>新干线</b><span>指定席 vs 自由席；30 寸以上大行李需预约带行李位。</span></li>
+          <li><b>市内交通</b><span>Suica / PASMO 直接刷手机，地铁与 JR 通用。</span></li>
+          <li><b>巴士</b><span>多为后门上车、前门下车付费，下车前按铃。</span></li>
+          <li><b>扶梯</b><span>东京靠左站、让出右侧；大阪相反。</span></li>
+          <li><b>礼仪</b><span>车厢内不打电话；街上垃圾桶少，随身带小袋。</span></li>
+        </ul>
+      </article>
+
+      <article class="tipcard glass">
+        <h3>物品清单</h3>
+        <p class="sub">12 月的长野比东京冷一个季节</p>
+        <ul class="clist">
+          <li><label><input type="checkbox" data-k="gear-1"><span>防风 / 防水外套 + 保暖内衣</span></label></li>
+          <li><label><input type="checkbox" data-k="gear-2"><span>防滑防水短靴（长野积雪）</span></label></li>
+          <li><label><input type="checkbox" data-k="gear-3"><span>围巾、帽子、手套</span></label></li>
+          <li><label><input type="checkbox" data-k="gear-4"><span>暖宝宝、护唇膏、保湿霜</span></label></li>
+          <li><label><input type="checkbox" data-k="gear-5"><span>充电宝（随身不可托运）+ 转换插头</span></label></li>
+          <li><label><input type="checkbox" data-k="gear-6"><span>折叠伞、小背包（一日游用）</span></label></li>
+        </ul>
+      </article>
+    </div>
+
+    <p class="disclaimer">
+      说明：本页时间、票价、营业信息均为大致参考，出发前请以官方与换乘案内为准；12/29–1/3 是日本年末年始假期，部分设施休馆或缩短营业，热门餐厅与温泉旅馆建议提前预约。
+    </p>
+  </section>
+</main>
+
+<footer class="wrap">
+  <p>v2.0 · 液态玻璃版 · 最后更新 2026-11-19</p>
+  <p>单文件 index.html · 纯静态 · 上传仓库根目录后由 Cloudflare Pages 自动部署</p>
+</footer>
+
+<script>
+/* ============================================================
+   交互脚本：手风琴展开、全部展开、清单勾选持久化
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.day'));
+  var toggleAll = document.getElementById('toggleAll');
+
+  /* ---------- 1. 单卡展开 / 收起 ---------- */
+  function setOpen(card, open) {
+    card.classList.toggle('open', open);
+    var btn = card.querySelector('.day-head');
+    if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  cards.forEach(function (card) {
+    var btn = card.querySelector('.day-head');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var willOpen = !card.classList.contains('open');
+      setOpen(card, willOpen);
+      syncToggleAll();
+      if (willOpen) keepHeaderVisible(card);
+    });
+  });
+
+  /* 展开后如果卡片头被顶出屏幕，轻轻拉回来（不打断阅读） */
+  function keepHeaderVisible(card) {
+    var top = card.getBoundingClientRect().top;
+    var barH = 62;
+    if (top < barH) {
+      window.scrollTo({ top: window.pageYOffset + top - barH, behavior: 'smooth' });
+    }
+  }
+
+  /* ---------- 2. 全部展开 / 全部收起 ---------- */
+  function allOpen() {
+    return cards.every(function (c) { return c.classList.contains('open'); });
+  }
+  function syncToggleAll() {
+    if (!toggleAll) return;
+    var open = allOpen();
+    toggleAll.textContent = open ? '全部收起' : '全部展开';
+    toggleAll.setAttribute('aria-pressed', open ? 'true' : 'false');
+  }
+  if (toggleAll) {
+    toggleAll.addEventListener('click', function () {
+      var open = allOpen();
+      cards.forEach(function (c) { setOpen(c, !open); });
+      syncToggleAll();
+    });
+  }
+  syncToggleAll();
+
+  /* ---------- 3. 清单勾选：localStorage 持久化 ---------- */
+  var KEY = 'jp-trip-checks-v1';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { state = {}; }
+
+  var boxes = document.querySelectorAll('input[type="checkbox"][data-k]');
+  boxes.forEach(function (box) {
+    var k = box.getAttribute('data-k');
+    if (state[k]) box.checked = true;
+    box.addEventListener('change', function () {
+      state[k] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* 隐私模式忽略 */ }
+      updateBar();
+    });
+  });
+
+  var bar = document.getElementById('prepBar');
+  function updateBar() {
+    if (!bar) return;
+    var list = document.querySelectorAll('#prepList input[type="checkbox"]');
+    var done = document.querySelectorAll('#prepList input[type="checkbox"]:checked');
+    bar.textContent = done.length + ' / ' + list.length;
+  }
+  updateBar();
+})();
+</script>
+</body>
+</html>
